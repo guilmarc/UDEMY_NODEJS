@@ -1,0 +1,62 @@
+{
+  "info": {
+    "title": "Members REST API",
+    "description": "REST API to manage users",
+    "version": "1.0.0"
+  },
+  "basePath" : "/api/v1",
+  "tags" : [
+    {
+      "name": "members",
+      "description" : "Members section"
+    }
+  ],
+  "paths": {
+    "/members/{id}": {
+      "get": {
+        "tags": ["members"],
+        "summary": "/members/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/members": {
+      "get": {
+        "tags": ["members"],
+        "summary": "/members",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": ["members"],
+        "summary": "/members",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {}
+      }
+    }
+  },
+  "swagger": "2.0"
+}

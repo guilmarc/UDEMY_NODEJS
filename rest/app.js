@@ -2,7 +2,9 @@ const {success, error, checkAndChange} = require("./assets/functions")
 
 const bodyParser = require("body-parser");
 const express = require("express");
-
+//const expressOasGenerator = require("express-oas-generator"); //Onetime swagger file generator
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./assets/swagger.json");
 const morgan = require('morgan'); //Middleware permettant de loguer les requêtes SQL
 const config = require("./assets/config");
 
@@ -20,6 +22,8 @@ mysql.createConnection({
     console.log("Connected on thread #" + connection.threadId);
 
     const app = express();
+    //expressOasGenerator.init(app, {}); //Accéder à la documentation à l'url locaslhost:8080/api-docs
+
 
     let membersRouter = express.Router();
     let Members = require("./assets/classes/members")(connection, config);
@@ -27,7 +31,7 @@ mysql.createConnection({
     app.use(morgan('dev'));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended : true }));
-
+    app.use(config.rootUrl + "api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 
@@ -38,6 +42,9 @@ mysql.createConnection({
             res.json( checkAndChange(member) );
         });
 
+        //PUT
+
+        //
 
     membersRouter.route("/")
 
