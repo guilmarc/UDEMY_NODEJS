@@ -1,4 +1,4 @@
-const {success, error} = require("./assets/functions")
+const {success, error, checkAndChange} = require("./assets/functions")
 
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -6,22 +6,16 @@ const express = require("express");
 const morgan = require('morgan'); //Middleware permettant de loguer les requêtes SQL
 const config = require("./assets/config");
 
-const mysql = require("mysql");
+const mysql = require("promise-mysql");
 
-var connection = mysql.createConnection({
+mysql.createConnection({
     host    :   config.database.host,
     port    :   config.database.port,
     database:   config.database.name,
     user    :   config.database.user,
     pass    :   config.database.pass
-});
 
-connection.connect(null, (err) => {
-
-    if(err) {
-        console.log(err);
-        return;
-    }
+}).then(connection => {
 
     console.log("Connected on thread #" + connection.threadId);
 
@@ -39,60 +33,29 @@ connection.connect(null, (err) => {
 
     membersRouter.route("/:id")
 
-        .get((req, res) => {
-
-            connection.query("SELECT * FROM members WHERE id = ?",  [req.params.id], (err, result) => {
-                if(err) {
-                    res.json(error(err.message));
-                    return;
-                }
-
-                res.json(success(result[0]));
-            });
-
-        })
-
-
+        .get(async (req, res) => {
+            let member = await Members.getByID(req.params.id);
+            res.json( checkAndChange(member) );
+        });
 
 
     membersRouter.route("/")
 
-        .get((req, res) => {
-
-            connection.query("SELECT * FROM members", (err, result) => {
-                if(err) {
-                    res.json(error(err.message));
-                    return;
-                }
-
-                res.json(success(result));
-            });
+        .get(async (req, res) => {
+            let members = await Members.getAll(req.query.max);
+            res.json( checkAndChange(members) );
         })
 
-        .post((req, res) => {
-
-            if(req.body.name) {
-
-                connection.query("INSERT INTO members (name) VALUES(?)", [req.body.name], (err, results) => {
-                    if(err) {
-                        res.json(error(err.message));
-                        return
-                    }
-
-                    res.json(success(results));
-                })
-
-
-            } else {
-                res.json(error("Request need 'name' parameter"));
-            }
+        .post(async (req, res) => {
+            let response = await Members.add(req.body.name);
+            res.json( checkAndChange(response) );
         });
 
 
     app.use(config.rootUrl + "members", membersRouter);
     app.listen(config.port, () => console.log("Started on port " + config.port));
-
-
+}).catch((err) => {
+   console.log(err.message);
 });
 
 
