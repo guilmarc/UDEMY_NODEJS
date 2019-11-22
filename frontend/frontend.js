@@ -16,17 +16,16 @@ var fetch = axios.create({
 //TODO: Remove this PATCH cause render should lookup in the views folder
 frontend.set('views', __dirname + "/views/");
 
+
+//Page d'accueil
 frontend.get("/", (req, res) => {
-
-
-
-    //res.sendFile(__dirname + "/views/index.twig");
     res.render("index.twig", {
         "name" : req.query.name
     })
 });
 
 
+//Page récupérant tous les membres
 frontend.get("/members", (req, res) => {
 
     fetch.get("/members")
@@ -36,7 +35,7 @@ frontend.get("/members", (req, res) => {
                     members: response.data.payload
                 })
             } else {
-                renderError(res, "response.data.message")
+                renderError(res, response.data.message)
             }
         })
         .catch(err => {
@@ -44,6 +43,21 @@ frontend.get("/members", (req, res) => {
         })
 });
 
+
+frontend.get("/members/:id", (req, res) => {
+    fetch.get("/members/" + req.params.id)
+        .then((response) => {
+            if(response.data.status === 'success'){
+                res.render("member.twig", {
+                    member: response.data.payload
+                })
+            } else {
+                renderError(res, response.data.message)
+            }
+
+        })
+        .catch((err) => renderError(res, err.message))
+})
 
 frontend.listen(8081, ()=> {
     console.log("Started on port " + 8081);

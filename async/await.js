@@ -26,7 +26,7 @@ function getMember() {
 function getArticles() {
     return new Promise(resolve => {
         setTimeout(()=>{
-            resolve([1, 2 , 3])
+            resolve([1, 2, 3])
         }, 1000)
     })
 }
