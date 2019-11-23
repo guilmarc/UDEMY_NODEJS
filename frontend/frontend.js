@@ -59,6 +59,21 @@ frontend.get("/members/:id", (req, res) => {
         .catch((err) => renderError(res, err.message))
 })
 
+frontend.get("/edit/:id", (req, res) => {
+    fetch.get("/members/" + req.params.id)
+        .then((response) => {
+            if(response.data.status === 'success'){
+                res.render("edit.twig", {
+                    member: response.data.payload
+                })
+            } else {
+                renderError(res, response.data.message)
+            }
+
+        })
+        .catch((err) => renderError(res, err.message))
+})
+
 frontend.listen(8081, ()=> {
     console.log("Started on port " + 8081);
 });
