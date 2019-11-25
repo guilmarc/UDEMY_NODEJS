@@ -74,6 +74,30 @@ frontend.get("/edit/:id", (req, res) => {
         .catch((err) => renderError(res, err.message))
 })
 
+frontend.post('/edit/:id', (req, res) => {
+    fetch.put('/members/' + req.params.id, req.body)
+        .then((response) => {
+            if(response.data.status === 'success'){
+                res.redirect("/members")
+            } else {
+                renderError(res, response.data.message)
+            }
+        })
+        .catch((err) => renderError(res, err.message))
+});
+
+frontend.post('/delete', (req, res) => {
+    fetch.delete("/members/:id", req.body.id)
+        .then(response => {
+            if(response.data.status === 'success'){
+                res.redirect("/members")
+            } else {
+                renderError(res, response.data.message)
+            }
+        })
+        .catch(err => renderError(res, err.message))
+});
+
 frontend.listen(8081, ()=> {
     console.log("Started on port " + 8081);
 });

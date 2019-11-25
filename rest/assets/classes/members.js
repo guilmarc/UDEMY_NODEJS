@@ -60,4 +60,20 @@ let Members = class {
 
     }
 
+    static update(id, name) {
+
+        return new Promise ( next => {
+
+            if(id && name) {
+                database.query("UPDATE members SET name = ? WHERE id = ?", [name, id])
+                    .then(result => next(result))
+                    .catch(err => next(err))
+            } else {
+                next(new Error("Missing value [id, name]"))
+            }
+
+        })
+
+    }
+
 }
