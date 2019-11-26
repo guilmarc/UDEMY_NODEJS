@@ -76,4 +76,11 @@ let Members = class {
 
     }
 
+    static deleteByID(id) {
+        return new Promise ( next => {
+            database.query("DELETE FROM members WHERE id = ?", [id])
+                .then(result => next(result))
+                .catch(err => next(err))
+        })
+    }
 }

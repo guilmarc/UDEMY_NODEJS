@@ -45,7 +45,12 @@ mysql.createConnection({
         .put(async (req, res) => {
             let member = await Members.update(req.params.id, req.body.name)
             res.json( checkAndChange(member) );
-        });
+        })
+
+        .delete( async(req, res) => {
+            let response = await Members.deleteByID(req.params.id);
+            res.json( checkAndChange( response ) )
+        })
 
         //TODO: Ajouter le delete ici et dans Members.
 
